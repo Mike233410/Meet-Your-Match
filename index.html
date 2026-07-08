@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Perfect Match — Start Your Love Story Today</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --rose: #e8305a;
+      --rose-light: #ff6b8a;
+      --gold: #f5c842;
+      --dark: #1a0a12;
+      --card-bg: rgba(255,255,255,0.08);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Slideshow backdrop */
+    .slides {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+    }
+    .slide.active { opacity: 1; }
+
+    /* Gradient overlay */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(26,10,18,0.82) 0%,
+        rgba(232,48,90,0.38) 50%,
+        rgba(26,10,18,0.90) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 40px 20px;
+      max-width: 820px;
+      margin: auto;
+    }
+
+    .tag {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--rose), var(--rose-light));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 22px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+      animation: fadeDown .8s ease both;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(38px, 6vw, 76px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fadeDown .9s .15s ease both;
+    }
+    h1 span { color: var(--rose-light); }
+
+    .sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255,255,255,.78);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      animation: fadeDown 1s .3s ease both;
+    }
+
+    .cta-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      animation: fadeDown 1s .45s ease both;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 20px 54px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 60px;
+      background: linear-gradient(135deg, var(--rose), #c2185b);
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 12px 40px rgba(232,48,90,.55);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .btn-primary:hover { transform: scale(1.06); box-shadow: 0 18px 50px rgba(232,48,90,.7); }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 20px 44px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 60px;
+      background: rgba(255,255,255,.12);
+      border: 2px solid rgba(255,255,255,.35);
+      color: #fff;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: background .3s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.22); }
+
+    /* hearts floating */
+    .hearts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .heart {
+      position: absolute;
+      bottom: -60px;
+      font-size: 22px;
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(1);   opacity: .7; }
+      80%  { opacity: .5; }
+      100% { transform: translateY(-110vh) scale(.4); opacity: 0; }
+    }
+
+    /* ── PLACES STRIP ── */
+    .places {
+      padding: 70px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #1a0a12 0%, #2b0e1e 100%);
+    }
+    .places h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      margin-bottom: 14px;
+    }
+    .places .lead {
+      color: rgba(255,255,255,.65);
+      font-size: 17px;
+      margin-bottom: 50px;
+    }
+    .place-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .place-card {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      height: 300px;
+      cursor: pointer;
+      transition: transform .4s, box-shadow .4s;
+    }
+    .place-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(232,48,90,.3); }
+    .place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .5s;
+    }
+    .place-card:hover img { transform: scale(1.08); }
+    .place-card .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(26,10,18,.9) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 22px;
+    }
+    .place-card .icon { font-size: 30px; margin-bottom: 6px; }
+    .place-card h3 { font-size: 20px; font-weight: 700; }
+    .place-card p  { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+    /* ── COUNTER STRIP ── */
+    .stats {
+      padding: 60px 20px;
+      background: linear-gradient(90deg, #e8305a, #c2185b);
+      text-align: center;
+    }
+    .stat-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px 80px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .stat h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      font-weight: 900;
+    }
+    .stat p { font-size: 15px; opacity: .85; }
+
+    /* ── STORIES ── */
+    .stories {
+      padding: 80px 20px;
+      background: linear-gradient(180deg, #2b0e1e 0%, #1a0a12 100%);
+      text-align: center;
+    }
+    .stories h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 4vw, 42px);
+      margin-bottom: 12px;
+    }
+    .stories .lead { color: rgba(255,255,255,.6); margin-bottom: 50px; }
+
+    .story-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: auto 20px;
+    }
+    .story-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 32px 28px;
+      backdrop-filter: blur(10px);
+      text-align: left;
+      transition: transform .3s, border-color .3s;
+    }
+    .story-card:hover { transform: translateY(-6px); border-color: var(--rose); }
+    .story-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .story-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--rose);
+    }
+    .story-name { font-weight: 700; font-size: 16px; }
+    .story-loc  { font-size: 13px; color: rgba(255,255,255,.55); }
+    .stars { color: var(--gold); font-size: 16px; margin-bottom: 10px; }
+    .story-card p { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.7; }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      padding: 80px 20px;
+      background: #1a0a12;
+      text-align: center;
+    }
+    .how h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 4vw, 42px);
+      margin-bottom: 12px;
+    }
+    .how .lead { color: rgba(255,255,255,.6); margin-bottom: 56px; }
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .step {
+      flex: 1;
+      min-width: 200px;
+      max-width: 220px;
+      text-align: center;
+    }
+    .step-num {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), #c2185b);
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 24px rgba(232,48,90,.45);
+    }
+    .step h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .step p  { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.6; }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      position: relative;
+      padding: 100px 20px;
+      text-align: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2b0e1e, #e8305a 60%, #c2185b);
+    }
+    .final-cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 62px);
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .final-cta p {
+      font-size: 18px;
+      opacity: .85;
+      margin-bottom: 44px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      background: rgba(0,0,0,.4);
+      overflow: hidden;
+      padding: 14px 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker span {
+      font-size: 14px;
+      color: rgba(255,255,255,.65);
+      padding: 0 40px;
+    }
+    .ticker span b { color: var(--rose-light); }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── AD BANNER ── */
+    .ad-sticky {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      background: linear-gradient(90deg, #1a0a12 0%, #2b0e1e 50%, #1a0a12 100%);
+      border-top: 2px solid var(--rose);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      box-shadow: 0 -6px 30px rgba(232,48,90,.35);
+      animation: slideUp .6s ease both;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .ad-sticky .ad-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: .3px;
+    }
+    .ad-sticky .ad-text span { color: var(--rose-light); }
+    .ad-sticky .ad-btn {
+      display: inline-block;
+      padding: 10px 28px;
+      background: linear-gradient(135deg, var(--rose), #c2185b);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 50px;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 18px rgba(232,48,90,.5);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .ad-sticky .ad-btn:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(232,48,90,.7); }
+    .ad-sticky .ad-close {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.5);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      transition: color .2s;
+    }
+    .ad-sticky .ad-close:hover { color: #fff; }
+
+    .ad-inline {
+      display: block;
+      margin: 0 auto;
+      max-width: 960px;
+      padding: 0 20px 60px;
+    }
+    .ad-inline a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, rgba(232,48,90,.18), rgba(194,24,91,.12));
+      border: 1px solid rgba(232,48,90,.4);
+      border-radius: 20px;
+      padding: 28px 36px;
+      text-decoration: none;
+      color: #fff;
+      transition: border-color .3s, background .3s, transform .3s;
+    }
+    .ad-inline a:hover {
+      border-color: var(--rose);
+      background: linear-gradient(135deg, rgba(232,48,90,.28), rgba(194,24,91,.22));
+      transform: translateY(-3px);
+    }
+    .ad-inline .ad-left { display: flex; align-items: center; gap: 16px; }
+    .ad-inline .ad-icon { font-size: 40px; }
+    .ad-inline .ad-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .ad-inline .ad-desc  { font-size: 14px; color: rgba(255,255,255,.65); }
+    .ad-inline .ad-pill {
+      background: linear-gradient(135deg, var(--rose), #c2185b);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 12px 32px;
+      border-radius: 50px;
+      white-space: nowrap;
+      box-shadow: 0 6px 20px rgba(232,48,90,.45);
+    }
+
+    /* push page content above sticky banner */
+    body { padding-bottom: 64px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 36px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,.4);
+      background: #100608;
+    }
+    footer a { color: rgba(255,255,255,.5); text-decoration: none; }
+    footer a:hover { color: var(--rose-light); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+      .place-card { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ░░ HERO ░░ -->
+<section class="hero">
+
+  <!-- Background slideshow -->
+  <div class="slides" id="slides">
+    <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1529693662653-9d480530a697?auto=format&fit=crop&w=1600&q=80')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1474552226712-ac0f0961a954?auto=format&fit=crop&w=1600&q=80')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1621155346337-1d19476ba7d6?auto=format&fit=crop&w=1600&q=80')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1600&q=80')"></div>
+  </div>
+
+  <!-- Floating hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <div class="hero-content">
+    <div class="tag">💘 #1 Trusted Dating Platform</div>
+    <h1>Find Someone Who Makes<br><span>Every Moment Magic</span></h1>
+    <p class="sub">
+      Millions of happy couples met here — on beaches, in cozy cafés,<br>
+      under city lights & mountain skies. Your story starts now.
+    </p>
+    <div class="cta-wrap">
+      <a href="#" class="btn-primary" id="main-cta">💑 Find My Match — It's Free</a>
+      <a href="#" class="btn-secondary" id="see-how-btn">See How It Works ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ LIVE TICKER ░░ -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>💕 <b>Jessica & Ryan</b> matched in New York · 2 hours ago</span>
+    <span>🌴 <b>Emma & Carlos</b> planned their first beach date · 1 hour ago</span>
+    <span>☕ <b>Sofia & Liam</b> are meeting for coffee in Paris · 3 hours ago</span>
+    <span>🏔️ <b>Mia & Noah</b> just booked a mountain getaway · 45 min ago</span>
+    <span>🌃 <b>Olivia & Ethan</b> enjoyed a city-lights rooftop dinner · just now</span>
+    <span>💕 <b>Jessica & Ryan</b> matched in New York · 2 hours ago</span>
+    <span>🌴 <b>Emma & Carlos</b> planned their first beach date · 1 hour ago</span>
+    <span>☕ <b>Sofia & Liam</b> are meeting for coffee in Paris · 3 hours ago</span>
+    <span>🏔️ <b>Mia & Noah</b> just booked a mountain getaway · 45 min ago</span>
+    <span>🌃 <b>Olivia & Ethan</b> enjoyed a city-lights rooftop dinner · just now</span>
+  </div>
+</div>
+
+<!-- ░░ PLACES ░░ -->
+<section class="places">
+  <h2>💞 Couples Enjoying Life Together</h2>
+  <p class="lead">Every place becomes unforgettable when you're with the right person.</p>
+  <div class="place-grid">
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2144&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="Beach">
+      <div class="overlay">
+        <div class="icon">🌊</div>
+        <h3>Beachside Bliss</h3>
+        <p>Sunset walks & waves for two</p>
+      </div>
+    </a>
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2146&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="Restaurant">
+      <div class="overlay">
+        <div class="icon">🍷</div>
+        <h3>Candlelit Dinners</h3>
+        <p>Fine dining made for romance</p>
+      </div>
+    </a>
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2147&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=900&q=80" alt="Mountain">
+      <div class="overlay">
+        <div class="icon">🏔️</div>
+        <h3>Mountain Escapes</h3>
+        <p>Adventure & awe, hand in hand</p>
+      </div>
+    </a>
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2170&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=900&q=80" alt="City">
+      <div class="overlay">
+        <div class="icon">🌃</div>
+        <h3>City Night Lights</h3>
+        <p>Dancing, rooftops & midnight magic</p>
+      </div>
+    </a>
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2140&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1464207687429-7505649dae38?auto=format&fit=crop&w=900&q=80" alt="Park">
+      <div class="overlay">
+        <div class="icon">🌸</div>
+        <h3>Garden Picnics</h3>
+        <p>Lazy afternoons in bloom</p>
+      </div>
+    </a>
+
+    <a class="place-card" href="https://aff.cpajunkie.com/click?camp=2141&pubid=3179" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=900&q=80" alt="Travel">
+      <div class="overlay">
+        <div class="icon">✈️</div>
+        <h3>Weekend Getaways</h3>
+        <p>New destinations, new memories</p>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ░░ STATS ░░ -->
+<section class="stats">
+  <div class="stat-grid">
+    <div class="stat">
+      <h3 id="c-members">0</h3>
+      <p>Active Members</p>
+    </div>
+    <div class="stat">
+      <h3 id="c-matches">0</h3>
+      <p>Successful Matches</p>
+    </div>
+    <div class="stat">
+      <h3 id="c-couples">0</h3>
+      <p>Couples in Love</p>
+    </div>
+    <div class="stat">
+      <h3 id="c-countries">0</h3>
+      <p>Countries</p>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ SUCCESS STORIES ░░ -->
+<section class="stories">
+  <h2>💬 Real Love Stories</h2>
+  <p class="lead">Hear from couples who found their forever person here.</p>
+  <div class="story-row">
+
+    <div class="story-card">
+      <div class="story-meta">
+        <img class="story-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&q=80" alt="Jessica">
+        <div>
+          <div class="story-name">Jessica & Ryan</div>
+          <div class="story-loc">📍 New York, USA</div>
+        </div>
+      </div>
+      <div class="stars">★★★★★</div>
+      <p>"We matched on a Thursday and had coffee by Saturday. A year later, we're inseparable — we've been to 6 countries together. This app literally changed my life!"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <img class="story-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80" alt="Sofia">
+        <div>
+          <div class="story-name">Sofia & Liam</div>
+          <div class="story-loc">📍 Paris, France</div>
+        </div>
+      </div>
+      <div class="stars">★★★★★</div>
+      <p>"I never thought I'd find love online. Liam messaged me about a book we both loved and from there it was history. We got engaged on the Eiffel Tower last spring! 🗼"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <img class="story-avatar" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&q=80" alt="Mia">
+        <div>
+          <div class="story-name">Mia & Noah</div>
+          <div class="story-loc">📍 Sydney, Australia</div>
+        </div>
+      </div>
+      <div class="stars">★★★★★</div>
+      <p>"We both loved hiking. Our first date was a trail in the Blue Mountains — five hours in and we didn't want to stop talking. We're planning our wedding for next summer! 🏕️"</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ░░ HOW IT WORKS ░░ -->
+<section class="how" id="how">
+  <h2>How It Works</h2>
+  <p class="lead">Finding love has never been this simple.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Create Your Profile</h3>
+      <p>Sign up free in 60 seconds. Add a photo and a few things about you.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Get Smart Matches</h3>
+      <p>Our algorithm finds people who share your vibe, values, and interests.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Start a Conversation</h3>
+      <p>Break the ice with a message. No awkward first moves required.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Meet & Fall in Love</h3>
+      <p>Plan your first date and write your own happily-ever-after.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ INLINE AD BANNER ░░ -->
+<div class="ad-inline">
+  <a href="https://aff.cpajunkie.com/click?camp=2141&pubid=3179" target="_blank" rel="noopener">
+    <div class="ad-left">
+      <div class="ad-icon">💘</div>
+      <div>
+        <div class="ad-title">Your perfect match is waiting — join free today!</div>
+        <div class="ad-desc">Millions of singles. Real connections. Start your love story in 60 seconds.</div>
+      </div>
+    </div>
+    <div class="ad-pill">💑 Join Free Now →</div>
+  </a>
+</div>
+
+<!-- ░░ FINAL CTA ░░ -->
+<section class="final-cta">
+  <h2>Your Person Is<br>Already Waiting 💘</h2>
+  <p>Join millions of singles finding genuine connections every single day.</p>
+  <a href="#" class="btn-primary" style="font-size:20px; padding:22px 64px;" id="bottom-cta">
+    ❤️ Start For Free — Find Your Match
+  </a>
+</section>
+
+<!-- ░░ FOOTER ░░ -->
+<footer>
+  <p style="margin-bottom:10px;">
+    <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="#">Terms of Service</a> &nbsp;·&nbsp;
+    <a href="#">Contact</a>
+  </p>
+  <p>© 2026 LoveConnect™ — All rights reserved. This site may earn commission from qualifying sign-ups.</p>
+</footer>
+
+<script>
+  /* ── Slideshow ── */
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+  setInterval(() => {
+    slides[cur].classList.remove('active');
+    cur = (cur + 1) % slides.length;
+    slides[cur].classList.add('active');
+  }, 4500);
+
+  /* ── Floating hearts ── */
+  const emojis = ['❤️','💕','💖','💗','💓','💞','🌹','✨'];
+  const container = document.getElementById('hearts');
+  function spawnHeart() {
+    const el = document.createElement('div');
+    el.className = 'heart';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (14 + Math.random() * 22) + 'px';
+    const dur = 7 + Math.random() * 8;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = (Math.random() * 4) + 's';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 4) * 1000);
+  }
+  for (let i = 0; i < 18; i++) spawnHeart();
+  setInterval(spawnHeart, 1800);
+
+  /* ── Animated counters ── */
+  const targets = {
+    'c-members':  { end: 4200000, suffix: 'M+', divisor: 1000000 },
+    'c-matches':  { end: 920000,  suffix: 'K+', divisor: 1000 },
+    'c-couples':  { end: 310000,  suffix: 'K+', divisor: 1000 },
+    'c-countries':{ end: 190,     suffix: '+',  divisor: 1 }
+  };
+
+  function animateCounter(id, cfg) {
+    const el = document.getElementById(id);
+    const duration = 2200;
+    const step = 16;
+    const steps = duration / step;
+    let count = 0;
+    const inc = cfg.end / steps;
+    const timer = setInterval(() => {
+      count += inc;
+      if (count >= cfg.end) { count = cfg.end; clearInterval(timer); }
+      const display = cfg.divisor >= 1000
+        ? (count / cfg.divisor).toFixed(1)
+        : Math.round(count);
+      el.textContent = display + cfg.suffix;
+    }, step);
+  }
+
+  const statsSection = document.querySelector('.stats');
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      Object.entries(targets).forEach(([id, cfg]) => animateCounter(id, cfg));
+      observer.disconnect();
+    }
+  }, { threshold: 0.3 });
+  observer.observe(statsSection);
+
+  /* ── CTA href placeholder ── */
+  // Replace '#' with your actual CPA offer URL
+  document.getElementById('main-cta').href   = 'https://aff.cpajunkie.com/click?camp=2120&pubid=3179';
+  document.getElementById('bottom-cta').href = 'https://aff.cpajunkie.com/click?camp=2121&pubid=3179';
+
+  // "See How It Works" opens all 9 CPA links at once
+  const allLinks = [
+    'https://aff.cpajunkie.com/click?camp=2120&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2157&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2121&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2140&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2141&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2144&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2146&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2147&pubid=3179',
+    'https://aff.cpajunkie.com/click?camp=2170&pubid=3179'
+  ];
+  document.getElementById('see-how-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    allLinks.forEach(function(url, i) {
+      setTimeout(function() { window.open(url, '_blank'); }, i * 120);
+    });
+  });
+</script>
+
+<!-- ░░ STICKY BOTTOM AD BANNER ░░ -->
+<div class="ad-sticky" id="ad-sticky">
+  <div class="ad-text">💕 <span>Thousands of singles</span> are online right now — find your match!</div>
+  <a class="ad-btn" href="https://aff.cpajunkie.com/click?camp=2170&pubid=3179" target="_blank" rel="noopener">❤️ Meet Someone Now</a>
+  <button class="ad-close" onclick="document.getElementById('ad-sticky').style.display='none';document.body.style.paddingBottom='0'" aria-label="Close">✕</button>
+</div>
+
+</body>
+</html>
